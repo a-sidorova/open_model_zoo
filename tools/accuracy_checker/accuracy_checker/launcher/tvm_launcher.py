@@ -4,6 +4,8 @@ from collections import OrderedDict
 from ..config import NumberField, StringField, BoolField
 from .launcher import Launcher
 
+import importlib
+
 import numpy as np
 
 
@@ -80,7 +82,13 @@ class TVMLauncher(Launcher):
             print("VirtualMachine Runtime not supported yet. Graph Executor used")
 
 
-        if str(model_path).endswith('json') == True:
+        if str(model_path).endswith('tar') == True:
+            lib = self._tvm.runtime.load_module(model_path)
+            graph_executor = importlib.import_module('tvm.contrib.graph_executor')
+
+            return graph_executor.GraphModule(lib["default"](self._device))
+
+        elif str(model_path).endswith('json') == True:
 
             params_path = str(model_path).replace('.json', '.params')
 
@@ -121,7 +129,7 @@ class TVMLauncher(Launcher):
         res = 0
         return next(iter(self._outputs_names))
 
-    def fit_to_input(self, data, layer_name, layout, precision):
+    def fit_to_input(self, data, layer_name, layout, precision, template=None):
         data = super().fit_to_input(data, layer_name, layout, precision)
         return self._tvm.nd.array(data, self._device)
 
