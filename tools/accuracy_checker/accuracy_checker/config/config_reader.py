@@ -928,6 +928,19 @@ def provide_precision_and_layout(launchers, input_precisions, input_layouts):
             launcher['_input_layout'] = input_layouts
 
 
+def provide_devices_sessions_and_vm(launchers, devices, sessions, vm):
+    for launcher in launchers:
+        if devices:
+            for launcher in launchers:
+                launcher['device'] = devices
+        if sessions:
+            for launcher in launchers:
+                launcher['session'] = sessions
+        if vm:
+            for launcher in launchers:
+                launcher['vm'] = vm
+
+
 def provide_model_type(launcher, arguments):
     if 'model_type' in arguments:
         launcher['_model_type'] = arguments.model_type
@@ -940,8 +953,12 @@ def provide_model_type(launcher, arguments):
 def provide_models(launchers, arguments):
     input_precisions = arguments.input_precision if 'input_precision' in arguments else None
     input_layout = arguments.layout if 'layout' in arguments else None
+    devices = arguments.device if 'device' in arguments else None
+    sessions = arguments.session if 'session' in arguments else None
+    vm = arguments.vm if 'vm' in arguments else None
 
     provide_precision_and_layout(launchers, input_precisions, input_layout)
+    provide_devices_sessions_and_vm(launchers, devices, sessions, vm)
     if 'models' not in arguments or not arguments.models:
         return launchers
     model_paths = arguments.models

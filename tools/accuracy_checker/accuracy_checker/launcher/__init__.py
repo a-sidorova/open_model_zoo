@@ -91,6 +91,13 @@ except ImportError as import_error:
         'paddle_paddle', "PaddlePaddle isn't installed. Please, install it before using. \n{}".format(import_error.msg)
     )
 
+try:
+    from .tvm_launcher import TVMLauncher
+except ImportError as import_error:
+    TVMLauncher = unsupported_launcher(
+        'tvm', "TVM isn't installed. Please, install it before using. \n{}".format(import_error.msg)
+    )
+
 from .pytorch_launcher import PyTorchLauncher
 
 __all__ = [
@@ -106,6 +113,7 @@ __all__ = [
     'ONNXLauncher',
     'PyTorchLauncher',
     'PaddlePaddleLauncher',
+    'TVMLauncher',
     'DummyLauncher',
     'InputFeeder'
 ]
